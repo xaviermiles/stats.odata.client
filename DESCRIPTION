@@ -28,3 +28,11 @@ Language: en-US
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr
+Collate: 
+    'app_config.R'
+    'app_server.R'
+    'app_ui.R'
+    'utils_secrets.R'
+    'utils_odata_get.R'
+    'fct_odata_get.R'
+    'run_app.R'
