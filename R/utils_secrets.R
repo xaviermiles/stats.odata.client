@@ -19,15 +19,14 @@ get_secret <- function(
   file = NULL,
   use_parent = TRUE
 ) {
-  option_value <- getOption(glue::glue("golem.app.{value}"))
+  option_value <- getOption(glue::glue("golem.secrets.{value}"))
   if (!is.null(option_value))
     return(option_value)
 
   if (is.null(file))
     file <- app_sys("golem-secrets.yml")
-  if (file == "")
+  if (file == "" || !file.exists(file))
     stop("No golem-secrets.yml file.")
-  print(file)
   file_value <- config::get(
     value = value,
     config = config,
@@ -53,8 +52,6 @@ get_secret <- function(
 #' @export
 set_secrets <- function(...) {
   args <- list(...)
-  setOption <- function(key, val) rlang::exec("options", !!key := val)  # nolint
-
   for (name in names(args)) {
     if (name == "")
       next
@@ -63,15 +60,18 @@ set_secrets <- function(...) {
 }
 
 
-#' Clear app secrets
-#'
-#' @description Clears all secrets saved on memory.
+#' Clear app secrets saved in memory.
 #'
 #' @noRd
 clear_secrets <- function() {
   active_secrets <- names(options()) %>%
     .[stringr::str_detect(., "^golem\\.secrets\\.")]
   for (s in active_secrets) {
-    options(s = NULL)
+    setOption(s, NULL)
   }
 }
+
+#' Helper to set global option (corresponds to base::getOption)
+#'
+#' @noRd
+setOption <- function(key, val) rlang::exec("options", !!key := val)  # nolint

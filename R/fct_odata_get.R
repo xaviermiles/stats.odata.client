@@ -16,15 +16,16 @@
 basic_get <- function(endpoint, entity, query = "", timeout = 60) {
   service <- get_golem_config("service_prd")
   # TODO: check for NULL service. Here or somewhere else?
-  url <- URLencode(glue::glue("{service}/{endpoint}/{entity}?",
+  url <- URLencode(glue::glue("{service}/{endpoint}/{entity}",
                               if (query != "") "?{query}" else ""))
-  # if (query != "")
-  # top_query <- grepl("$top", query, fixed = TRUE)
+  top_query <- grepl("$top", query, fixed = TRUE)
 
   result <- data.frame()
   while (!is.null(url)) {
     content <- send_get(url, timeout)
     result <- rbind(result, content$value)
+    if (top_query)
+      break
     url <- content$"@odata.nextLink"
   }
 
@@ -51,6 +52,10 @@ get_catalogue <- function(endpoint = "data.json", timeout = 60) {
   # TODO: as above re NULL service.
   url <- URLencode(glue::glue("{service}/{endpoint}"))
   content <- send_get(url, timeout)
-  catalogue <- tidyr::unnest_longer(content$dataset)
+
+  if (!"dataset" %in% names(content))
+    stop("Response doesn't contain 'dataset'")
+
+  catalogue <- content$dataset %>% tidyr::unnest_longer(distribution)
   return(catalogue)
 }

@@ -11,6 +11,7 @@ Imports:
     glue,
     golem (>= 0.3.1),
     htmltools,
+    magrittr,
     processx,
     shiny (>= 1.7.1)
 Encoding: UTF-8
@@ -36,3 +37,4 @@ Collate:
     'utils_odata_get.R'
     'fct_odata_get.R'
     'run_app.R'
+    'utils_internals.R'

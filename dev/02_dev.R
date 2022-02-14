@@ -32,6 +32,9 @@ golem::add_fct("odata_get")
 golem::add_utils("odata_get")
 golem::add_utils("secrets")
 
+golem::add_utils("internals")
+# usethis::use_pipe(export = FALSE)  # << put in R/utils_internal.R
+
 ## External resources
 ## Creates .js and .css files at inst/app/www
 # golem::add_js_file("script")
@@ -45,6 +48,8 @@ golem::add_utils("secrets")
 ## Tests ----
 ## Add one line by test you want to create
 usethis::use_test("app")
+usethis::use_test("odata_get")
+usethis::use_test("secrets")
 
 # Documentation
 
