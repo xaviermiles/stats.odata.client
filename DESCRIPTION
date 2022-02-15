@@ -11,9 +11,14 @@ Imports:
     glue,
     golem (>= 0.3.1),
     htmltools,
+    httr,
+    jsonlite,
     magrittr,
     processx,
-    shiny (>= 1.7.1)
+    rlang,
+    shiny (>= 1.7.1),
+    stringr,
+    tidyr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2

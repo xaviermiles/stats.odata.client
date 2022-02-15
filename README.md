@@ -5,7 +5,7 @@
 
 # statsnz.odata.client
 
-The aim of statsnz.odata.client is to provide a simple shiny app that shows what datasets are in the Stats NZ open data API and allows for some basic filtering etc.
+The aim of statsnz.odata.client is to provide a simple shiny app that shows what datasets are in the Stats NZ Open Data API and allows for some basic filtering etc.
 
 ## Code of Conduct
 

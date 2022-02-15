@@ -1,3 +1,7 @@
+# TODO: allow querying UAT API - argument in get functions?
+#       This would need to switch between get_golem_config & get_golem_secret.
+
+
 #' basic_get
 #'
 #' @description Basic GET request to Stats NZ OData API.
@@ -16,8 +20,9 @@
 basic_get <- function(endpoint, entity, query = "", timeout = 60) {
   service <- get_golem_config("service_prd")
   # TODO: check for NULL service. Here or somewhere else?
-  url <- URLencode(glue::glue("{service}/{endpoint}/{entity}",
-                              if (query != "") "?{query}" else ""))
+  url <- glue::glue("{service}/{endpoint}/{entity}",
+                    if (query != "") "?{query}" else "") %>%
+    utils::URLencode()
   top_query <- grepl("$top", query, fixed = TRUE)
 
   result <- data.frame()
@@ -50,7 +55,7 @@ basic_get <- function(endpoint, entity, query = "", timeout = 60) {
 get_catalogue <- function(endpoint = "data.json", timeout = 60) {
   service <- get_golem_config("service_prd")
   # TODO: as above re NULL service.
-  url <- URLencode(glue::glue("{service}/{endpoint}"))
+  url <- utils::URLencode(glue::glue("{service}/{endpoint}"))
   content <- send_get(url, timeout)
 
   if (!"dataset" %in% names(content))

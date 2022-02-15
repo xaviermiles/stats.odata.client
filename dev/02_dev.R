@@ -15,12 +15,15 @@
 
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
-usethis::use_package("thinkr")
+# usethis::use_package("thinkr")
 usethis::use_package("httr")
 usethis::use_package("jsonlite")
 usethis::use_package("glue")
 usethis::use_package("config")
 usethis::use_package("stringr")
+usethis::use_package("rlang")
+usethis::use_package("tidyr")
+
 
 ## Add modules ----
 ## Create a module infrastructure in R/
