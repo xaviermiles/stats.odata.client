@@ -15,7 +15,6 @@
 
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
-# usethis::use_package("thinkr")
 usethis::use_package("httr")
 usethis::use_package("jsonlite")
 usethis::use_package("glue")
@@ -27,8 +26,7 @@ usethis::use_package("tidyr")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-# golem::add_module(name = "name_of_module1")
-# golem::add_module(name = "name_of_module2")
+golem::add_module("catalogue")
 
 ## Add helper fct_* and utils_* functions ----
 golem::add_fct("odata_get")
@@ -42,7 +40,7 @@ golem::add_utils("internals")
 ## Creates .js and .css files at inst/app/www
 # golem::add_js_file("script")
 # golem::add_js_handler("handlers")
-# golem::add_css_file("custom")
+golem::add_css_file("style")
 
 ## Add internal datasets ----
 ## If you have data in your package
@@ -62,10 +60,10 @@ usethis::use_test("secrets")
 
 ## Code Coverage----
 ## Set the code coverage service ("codecov" or "coveralls")
-usethis::use_coverage()
+# usethis::use_coverage()
 
 # Create a summary readme for the testthat subdirectory
-covrpage::covrpage()
+# covrpage::covrpage()
 
 ## CI ----
 ## Use this part of the script if you need to set up a CI

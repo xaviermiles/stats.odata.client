@@ -9,5 +9,5 @@ rm(list = ls(all.names = TRUE))
 golem::document_and_reload()
 
 # Run the application or tests
-# run_app()
-devtools::test()
+run_app()
+# devtools::test()

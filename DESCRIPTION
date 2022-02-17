@@ -41,5 +41,6 @@ Collate:
     'utils_secrets.R'
     'utils_odata_get.R'
     'fct_odata_get.R'
+    'mod_catalogue.R'
     'run_app.R'
     'utils_internals.R'

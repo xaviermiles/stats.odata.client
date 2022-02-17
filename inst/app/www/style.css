@@ -1,0 +1,70 @@
+/*
+a lot of this is thanks to
+https://github.com/Public-Health-Scotland/scotpho-profiles-tool/blob/master/shiny_app/www/styles.css
+*/
+
+.body {
+  background-color: black;
+}
+
+/* landing page boxes */
+.landing-page-box {
+  width: 100%;
+  height: 100%;
+  min-height: 23vh;
+  background-color: white;
+  border: 1px solid #AAAAAA;
+  margin-bottom: 5px;
+  float: left;
+  transition: 0.5s ease;
+  position: relative;
+  object-fit: scale-down;
+}
+.landing-page-box-about {
+  width: 100%;
+  height: 100%;
+  min-height: 11vh;
+  background-color: white;
+  border: 1px solid #AAAAAA;
+  margin-bottom: 5px;
+  float: left;
+  position: relative;
+  object-fit: scale-down;
+}
+
+.landing-page-box:hover, .landing-page-box-about:hover {
+  -webkit-transform: scale(1.05);
+  -ms-transform: scale(1.05);
+  transform: scale(1.05);
+}
+
+/* landing page other parts of boxes */
+.landing-page-button {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.landing-page-box-title {
+  font-size: 16px;
+  text-align:center;
+  color: darkgreen;
+  font-weight: bold;
+  background-color: none;
+  width:100%;
+  max-height: 20px;
+  margin-top: 2vh;
+}
+.landing-page-box-description {
+  font-size: 12px;
+  text-align: center;
+  color: darkblue;
+  background-color: none;
+  width:100%;
+  max-height: 20px;
+  margin-top: 2vh;
+  padding-bottom: 3vh;
+  padding-left: 2vw;
+  padding-right: 2vw;
+}
