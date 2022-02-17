@@ -15,6 +15,7 @@ Imports:
     jsonlite,
     magrittr,
     processx,
+    purrr,
     rlang,
     shiny (>= 1.7.1),
     stringr,

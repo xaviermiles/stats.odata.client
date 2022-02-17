@@ -22,6 +22,7 @@ usethis::use_package("config")
 usethis::use_package("stringr")
 usethis::use_package("rlang")
 usethis::use_package("tidyr")
+usethis::use_package("purrr")
 
 
 ## Add modules ----
