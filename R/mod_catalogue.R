@@ -10,23 +10,9 @@
 mod_catalogue_ui <- function(id) {
   ns <- NS(id)
 
-  get_lp_box <- function(title, button_name, description) {
-    div(
-      class="landing-page-box",
-      div(title, class = "landing-page-box-title"),
-      div(description, class = "landing-page-box-description"),
-      # div(class = "landing-page-icon"),
-      actionButton(button_name, NULL, class="landing-page-button")
-    )
-  }
-
   tagList(
     mainPanel(
       width = 12,
-      fluidRow(
-        column(4, class = "landing-page-column", get_lp_box("OTM", "OTM1", "Hello there friends!")),
-        column(4, class = "landing-page-column", get_lp_box("Cough", "hh2", "That's not friendly..."))
-      ),
       uiOutput(ns("fluid_row_boxes"))
     )
   )
@@ -59,9 +45,15 @@ mod_catalogue_server <- function(id) {
       purrr::map(
         catalogue_row_nums,
         function(i) {
+          # TODO: this hard-codes the number of characters that can be in each
+          #       description so that they don't spill over the bottom of the
+          #       box. Could this be done better? (CSS?)
+          description <- catalogue[i, "description"] %>%
+            substr(0, 200) %>%
+            paste0("...")
           get_landing_page_box(catalogue[i, "title"],
-                               paste0("poop", i),
-                               catalogue[i, "description"])
+                               paste0("catalogue_row_num_", i),
+                               description)
         }
       ) %>%
         purrr::lift(function(...) column(4, ...))(.)
@@ -77,6 +69,10 @@ mod_catalogue_server <- function(id) {
           return(fluid_row)
         }
       )
+    })
+
+    observeEvent(input$catalogue_row_num_1, {
+      print("hayo")
     })
   })
 }
