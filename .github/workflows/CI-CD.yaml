@@ -39,3 +39,9 @@ jobs:
 
       - name: Run tests
         uses: r-lib/actions/check-r-package@v1
+
+      - name: Authorise and deploy app
+        run: |
+          rsconnect::setAccountInfo(${{ secrets.RSCONNECT_USER }}, ${{ secrets.RSCONNECT_TOKEN }}, ${{ secrets.RSCONNECT_SECRET }})
+          rsconnect::deployApp(appName = "statsnz_odata_client", lint = FALSE, forceUpdate = TRUE)
+        shell: Rscript {0}

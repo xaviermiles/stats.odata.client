@@ -77,8 +77,8 @@ usethis::use_test("secrets")
 # usethis::use_github_actions()
 # Chose one of the three
 # See https://usethis.r-lib.org/reference/use_github_action.html
-# usethis::use_github_action_check_release()
-usethis::use_github_action_check_standard()
+usethis::use_github_action_check_release()
+# usethis::use_github_action_check_standard()
 # usethis::use_github_action_check_full()
 # Add action for PR
 usethis::use_github_action_pr_commands()
