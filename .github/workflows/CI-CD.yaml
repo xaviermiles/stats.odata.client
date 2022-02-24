@@ -2,9 +2,9 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
 
 name: CI-CD
 
@@ -22,9 +22,9 @@ jobs:
         env:
           STATSNZ_ODATA_TOKEN: ${{ secrets.STATSNZ_ODATA_TOKEN }}
         run: |
-          touch inst/golem-secrets.yaml
-          echo "default:" >> inst/golem-secrets.yaml
-          echo "  subscription_key: $STATSNZ_ODATA_TOKEN" >> inst/golem-secrets.yaml
+          touch $GITHUB_WORKSPACE/inst/golem-secrets.yml
+          echo "default:" >> $GITHUB_WORKSPACE/inst/golem-secrets.yml
+          echo "  subscription_key: $STATSNZ_ODATA_TOKEN" >> $GITHUB_WORKSPACE/inst/golem-secrets.yml
         shell: bash
 
       - name: Setup R
