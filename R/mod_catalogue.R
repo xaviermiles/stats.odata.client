@@ -35,7 +35,7 @@ mod_catalogue_server <- function(id) {
         div(title, class = "landing-page-box-title"),
         div(description, class = "landing-page-box-description"),
         # div(class = "landing-page-icon"),
-        actionButton(button_name, NULL, class="landing-page-button")
+        actionButton(NS(id, button_name), NULL, class="landing-page-button")
       )
     }
 
@@ -45,15 +45,9 @@ mod_catalogue_server <- function(id) {
       purrr::map(
         catalogue_row_nums,
         function(i) {
-          # TODO: this hard-codes the number of characters that can be in each
-          #       description so that they don't spill over the bottom of the
-          #       box. Could this be done better? (CSS?)
-          description <- catalogue[i, "description"] %>%
-            substr(0, 200) %>%
-            paste0("...")
           get_landing_page_box(catalogue[i, "title"],
                                paste0("catalogue_row_num_", i),
-                               description)
+                               catalogue[i, "description"])
         }
       ) %>%
         purrr::lift(function(...) column(4, ...))(.)
@@ -71,9 +65,14 @@ mod_catalogue_server <- function(id) {
       )
     })
 
-    observeEvent(input$catalogue_row_num_1, {
-      print("hayo")
-    })
+    purrr::map(
+      1:(3 * NUM_FLUID_ROWS),
+      function(box) {
+        observeEvent(input[[paste0("catalogue_row_num_", box)]], {
+          print(paste("Box number:", box))
+        })
+      }
+    )
   })
 }
 

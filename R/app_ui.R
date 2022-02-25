@@ -9,7 +9,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
 
     fluidPage(
-      h1("statsnz.odata.client"),
+      h1("Stats NZ Open Data API"),
 
       mod_catalogue_ui("catalogue_1")
     )
