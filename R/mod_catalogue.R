@@ -13,7 +13,7 @@ mod_catalogue_ui <- function(id) {
   tagList(
     mainPanel(
       width = 12,
-      uiOutput(ns("fluid_row_boxes"))
+      uiOutput(ns("landing_page_boxes"))
     )
   )
 }
@@ -28,6 +28,7 @@ mod_catalogue_server <- function(id) {
 
     catalogue <- get_catalogue()
     NUM_FLUID_ROWS <- 3 # global.R ?
+    selected_endpoint <- reactiveVal()
 
     get_landing_page_box <- function(title, button_name, description) {
       div(
@@ -39,28 +40,30 @@ mod_catalogue_server <- function(id) {
       )
     }
 
-    get_fluid_row_box <- function(catalogue_row_nums) {
+    get_row_of_boxes <- function(catalogue_row_nums) {
       # TODO: parameterise number of boxes per row? Currently hard-coded via
       #       width of column elements.
       purrr::map(
         catalogue_row_nums,
         function(i) {
-          get_landing_page_box(catalogue[i, "title"],
-                               paste0("catalogue_row_num_", i),
-                               catalogue[i, "description"])
+          column(
+            4,
+            get_landing_page_box(catalogue[i, "title"],
+                                 paste0("catalogue_row_num_", i),
+                                 catalogue[i, "description"])
+          )
         }
       ) %>%
-        purrr::lift(function(...) column(4, ...))(.)
+        purrr::lift(fluidRow)(.)
     }
 
-    # Construct fluid rows
-    output$fluid_row_boxes <- renderUI({
+    output$landing_page_boxes <- renderUI({
       purrr::map(
         1:NUM_FLUID_ROWS,
         function(i) {
           catalogue_row_nums <- (3*i - 2):(3*i)
-          fluid_row <- get_fluid_row_box(catalogue_row_nums)
-          return(fluid_row)
+          row_of_boxes <- get_row_of_boxes(catalogue_row_nums)
+          return(row_of_boxes)
         }
       )
     })
@@ -69,15 +72,17 @@ mod_catalogue_server <- function(id) {
       1:(3 * NUM_FLUID_ROWS),
       function(box) {
         observeEvent(input[[paste0("catalogue_row_num_", box)]], {
-          print(paste("Box number:", box))
+          # Seems weird that the catalogue doesn't provide endpoint as column,
+          # it only provides the whole service+endpoint URL.
+          # -> Takes everything past last forward-slash:
+          url <- catalogue$identifier[box]
+          endpoint <- sub(".+/(.+)$", "\\1", url)
+          selected_endpoint(endpoint)
         })
       }
     )
+
+    # selected_endpoint <- "Covid-19Indicators"
+    return(selected_endpoint)
   })
 }
-
-## To be copied in the UI
-# mod_catalogue_ui("catalogue_ui_1")
-
-## To be copied in the server
-# mod_catalogue_server("catalogue_ui_1")

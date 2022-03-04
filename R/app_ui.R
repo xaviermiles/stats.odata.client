@@ -10,8 +10,19 @@ app_ui <- function(request) {
 
     fluidPage(
       h1("Stats NZ Open Data API"),
-
-      mod_catalogue_ui("catalogue_1")
+      tabsetPanel(
+        tabPanel(
+          "catalogue",
+          mod_catalogue_ui("catalogue_1")
+        ),
+        tabPanel(
+          "hey",
+          mod_table_ui("table_1")
+        ),
+        id = "main_panel",
+        type = "hidden",
+        footer = "Get this info: https://api.stats.govt.nz/opendata/v1/data.json"
+      )
     )
   )
 }

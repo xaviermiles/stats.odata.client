@@ -37,6 +37,7 @@ Depends:
     R (>= 2.10)
 VignetteBuilder: knitr
 Collate: 
+    '_disable_autoload.R'
     'app_config.R'
     'app_server.R'
     'app_ui.R'
@@ -44,5 +45,6 @@ Collate:
     'utils_odata_get.R'
     'fct_odata_get.R'
     'mod_catalogue.R'
+    'mod_table.R'
     'run_app.R'
     'utils_internals.R'
