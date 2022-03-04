@@ -8,6 +8,5 @@ rm(list = ls(all.names = TRUE))
 # Document and reload your package
 golem::document_and_reload()
 
-# Run the application or tests
+# Run the application
 run_app()
-# devtools::test()

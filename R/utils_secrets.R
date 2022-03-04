@@ -16,15 +16,13 @@
 get_secret <- function(
   value,
   config = "default",
-  file = NULL,
+  file = app_sys("golem-secrets.yml"),
   use_parent = TRUE
 ) {
   option_value <- getOption(glue::glue("golem.secrets.{value}"))
   if (!is.null(option_value))
     return(option_value)
 
-  if (is.null(file))
-    file <- app_sys("golem-secrets.yml")
   if (file == "" || !file.exists(file))
     stop("No golem-secrets.yml file.")
   file_value <- config::get(
