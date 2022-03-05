@@ -10,11 +10,13 @@
 mod_table_ui <- function(id) {
   ns <- NS(id)
   tabPanel(
-    "Howdy",
+    id,
+    DT::DTOutput(ns("table1")),
     fluidRow(
-      DT::DTOutput(ns("table")),
-      helpText("Ask for more help when required.")
-    )
+      column(9, actionButton(ns("back"), "Scope out")),
+      column(3, uiOutput(ns("potential_forward")))
+    ),
+    helpText("Ask for more help when required.")
   )
 }
 
@@ -27,12 +29,37 @@ mod_table_server <- function(id, selection_info) {
 
     selected <- reactiveVal()
 
-    output$table <- DT::renderDT({
-      DT::datatable(data.frame(
-        name = c("Johnny", "Jenny", "Jelly"),
-        freckles = c(1, 12, 13),
-        bikes = c(3, 4, 5)
-      ))
+    data_data <- reactive({
+      d <- NULL
+      if (selection_info$type == "endpoint")
+        d <- basic_get(selection_info$val(), "")
+      else if (selection_info$type == "entity")
+        d <- basic_get(selection_info$val[[1]](), selection_info$val[[2]]())
+
+      return(d)
+    })
+
+    output$table1 <- DT::renderDT({
+      DT::datatable(data_data(), selection = "single",
+                    options = list(lengthChange = FALSE))
+    })
+
+    observeEvent(input$back, {
+      # TODO: how to send signal?
+    })
+
+    output$potential_forward <- renderUI({
+      if (selection_info$type == "entity")
+        return(HTML(NULL))
+
+      actionButton(ns("forward"), "Scope in")
+    })
+
+    observeEvent(input$forward, {
+      if (!is.null(input$table1_rows_selected)) {
+        selected_name <- data_data()$name[input$table1_rows_selected]
+        selected(selected_name)
+      }
     })
 
     return(selected)
