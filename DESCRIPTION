@@ -37,8 +37,7 @@ Language: en-US
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr
-Collate: 
-    '_disable_autoload.R'
+Collate:
     'app_config.R'
     'app_server.R'
     'app_ui.R'
