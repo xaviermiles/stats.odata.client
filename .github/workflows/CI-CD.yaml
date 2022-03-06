@@ -1,6 +1,8 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/master/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
 
 name: CI-CD
 
@@ -37,7 +39,12 @@ jobs:
         uses: r-lib/actions/check-r-package@v1
 
       - name: Deploy to shinyapps.io
+        env:
+          RSCONNECT_TOKEN: ${{ secrets.RSCONNECT_TOKEN }}
+          RSCONNECT_SECRET: ${{ secrets.RSCONNECT_SECRET }}
         run: |
-          rsconnect::setAccountInfo("${{ secrets.RSCONNECT_USER }}", "${{ secrets.RSCONNECT_TOKEN }}", "${{ secrets.RSCONNECT_SECRET }}")
-          rsconnect::deployApp()
+          token = Sys.getenv("RSCONNECT_TOKEN")
+          secret = Sys.getenv("RSCONNECT_SECRET")
+          rsconnect::setAccountInfo("xavier-miles", token, secret)
+          rsconnect::deployApp(appName = "statsnz_odata_client", forceUpdate = TRUE, lint = FALSE)
         shell: Rscript {0}
