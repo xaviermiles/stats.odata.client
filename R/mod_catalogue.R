@@ -26,9 +26,11 @@ mod_catalogue_server <- function(id) {
     ns <- session$ns
     # TODO: if is.null(subscription_key) -> prompt for key?
 
-    catalogue <- get_catalogue()
+    catalogue <- reactive({
+      get_catalogue()
+    })
     NUM_FLUID_ROWS <- 3 # global.R ?
-    selected_endpoint <- reactiveVal()
+    response <- reactiveValues(direction = NULL, val = NULL)
 
     get_landing_page_box <- function(title, button_name, description) {
       div(
@@ -48,9 +50,9 @@ mod_catalogue_server <- function(id) {
         function(i) {
           column(
             4,
-            get_landing_page_box(catalogue[i, "title"],
+            get_landing_page_box(catalogue()[i, "title"],
                                  paste0("catalogue_row_num_", i),
-                                 catalogue[i, "description"])
+                                 catalogue()[i, "description"])
           )
         }
       ) %>%
@@ -75,14 +77,14 @@ mod_catalogue_server <- function(id) {
           # Seems weird that the catalogue doesn't provide endpoint as column,
           # it only provides the whole service+endpoint URL.
           # -> Takes everything past last forward-slash:
-          url <- catalogue$identifier[box]
+          url <- catalogue()$identifier[box]
           endpoint <- sub(".+/(.+)$", "\\1", url)
-          selected_endpoint(endpoint)
+          response$direction <- "forward"
+          response$val <- endpoint
         })
       }
     )
 
-    # selected_endpoint <- "Covid-19Indicators"
-    return(selected_endpoint)
+    return(response)
   })
 }

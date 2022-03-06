@@ -15,13 +15,9 @@ app_ui <- function(request) {
           "catalogue",
           mod_catalogue_ui("catalogue_1")
         ),
-        tabPanel(
-          "hey",
-          mod_table_ui("table_1")
-        ),
         id = "main_panel",
         type = "hidden",
-        footer = "Get this info: https://api.stats.govt.nz/opendata/v1/data.json"
+        footer = textOutput("footer_text")
       )
     )
   )

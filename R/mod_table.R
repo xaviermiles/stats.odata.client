@@ -23,33 +23,30 @@ mod_table_ui <- function(id) {
 #' table Server Functions
 #'
 #' @noRd
-mod_table_server <- function(id, selection_info) {
+mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    selected <- reactiveVal()
-
-    data_data <- reactive({
-      d <- NULL
-      if (selection_info$type == "endpoint")
-        d <- basic_get(selection_info$val(), "")
-      else if (selection_info$type == "entity")
-        d <- basic_get(selection_info$val[[1]](), selection_info$val[[2]]())
-
-      return(d)
-    })
+    response <- reactiveValues(direction = NULL, val = NULL)
 
     output$table1 <- DT::renderDT({
-      DT::datatable(data_data(), selection = "single",
-                    options = list(lengthChange = FALSE))
+      DT::datatable(
+        data_data()$value,
+        selection = "single",
+        options = list(
+          lengthChange = FALSE
+        )
+      )
     })
 
     observeEvent(input$back, {
-      # TODO: how to send signal?
+      response$direction <- "back"
+      response$val <- NULL
+      print("back")
     })
 
     output$potential_forward <- renderUI({
-      if (selection_info$type == "entity")
+      if (!"forward" %in% buttons)
         return(HTML(NULL))
 
       actionButton(ns("forward"), "Scope in")
@@ -57,12 +54,13 @@ mod_table_server <- function(id, selection_info) {
 
     observeEvent(input$forward, {
       if (!is.null(input$table1_rows_selected)) {
-        selected_name <- data_data()$name[input$table1_rows_selected]
-        selected(selected_name)
+        response$direction <- "forward"
+        response$val <- data_data()$value$name[input$table1_rows_selected]
       }
+      print("forward")
     })
 
-    return(selected)
+    return(response)
   })
 }
 
