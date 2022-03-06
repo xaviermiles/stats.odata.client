@@ -2,14 +2,14 @@
 % Please edit documentation in R/fct_odata_get.R
 \name{basic_get}
 \alias{basic_get}
-\title{basic_get}
+\title{Basic GET request to Stats NZ OData API, with paging when required.}
 \usage{
-basic_get(endpoint, entity, query = "", timeout = 60)
+basic_get(endpoint, entity = "", query = "", timeout = 60)
 }
 \arguments{
 \item{endpoint}{API endpoint. Required.}
 
-\item{entity}{Data entity. Required.}
+\item{entity}{Data entity.}
 
 \item{query}{Query URL character (not URL-encoded).}
 
@@ -19,7 +19,5 @@ basic_get(endpoint, entity, query = "", timeout = 60)
 A data frame containing the requested data.
 }
 \description{
-Basic GET request to Stats NZ OData API.
-
 Derived from https://github.com/StatisticsNZ/open-data-api/
 }

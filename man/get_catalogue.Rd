@@ -2,7 +2,7 @@
 % Please edit documentation in R/fct_odata_get.R
 \name{get_catalogue}
 \alias{get_catalogue}
-\title{get_catalogue}
+\title{GET the catalogue of Stats NZ OData API.}
 \usage{
 get_catalogue(endpoint = "data.json", timeout = 60)
 }
@@ -13,11 +13,9 @@ get_catalogue(endpoint = "data.json", timeout = 60)
 }
 \value{
 A data frame containing the requested catalogue data. This is
-generally not a tidy dataset since it uses prefixes to represent some of
+generally not a "tidy dataset" since it uses prefixes to represent some of
 the more nested content.
 }
 \description{
-Send GET request to catalogue of Stats NZ OData API.
-
 Derived from https://github.com/StatisticsNZ/open-data-api/
 }
