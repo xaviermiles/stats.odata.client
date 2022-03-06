@@ -33,7 +33,10 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
       DT::datatable(
         data_data()$value,
         selection = "single",
+        class = "nowrap",  # stops row heights from growing
+        rownames = FALSE,
         options = list(
+          scrollX = TRUE,
           lengthChange = FALSE
         )
       )
