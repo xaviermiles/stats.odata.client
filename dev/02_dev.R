@@ -28,6 +28,7 @@ usethis::use_package("purrr")
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module("catalogue")
+golem::add_module("table")
 
 ## Add helper fct_* and utils_* functions ----
 golem::add_fct("odata_get")

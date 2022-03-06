@@ -9,9 +9,16 @@ app_ui <- function(request) {
     golem_add_external_resources(),
 
     fluidPage(
-      h1("statsnz.odata.client"),
-
-      mod_catalogue_ui("catalogue_1")
+      h1("Stats NZ Open Data API"),
+      tabsetPanel(
+        tabPanel(
+          "catalogue",
+          mod_catalogue_ui("catalogue_1")
+        ),
+        id = "main_panel",
+        type = "hidden",
+        footer = textOutput("footer_text")
+      )
     )
   )
 }
@@ -34,7 +41,7 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "statsnz.odata.client"
+      app_title = "Stats NZ OData API Client"
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()

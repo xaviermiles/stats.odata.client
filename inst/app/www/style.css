@@ -19,6 +19,7 @@ https://github.com/Public-Health-Scotland/scotpho-profiles-tool/blob/master/shin
   transition: 0.5s ease;
   position: relative;
   object-fit: scale-down;
+  overflow: hidden;
 }
 .landing-page-box-about {
   width: 100%;
@@ -33,9 +34,10 @@ https://github.com/Public-Health-Scotland/scotpho-profiles-tool/blob/master/shin
 }
 
 .landing-page-box:hover, .landing-page-box-about:hover {
-  -webkit-transform: scale(1.05);
-  -ms-transform: scale(1.05);
-  transform: scale(1.05);
+  -webkit-transform: scale(1.048);
+  -ms-transform: scale(1.048);
+  transform: scale(1.048);
+  filter: blur(.0px);
 }
 
 /* landing page other parts of boxes */
@@ -48,20 +50,21 @@ https://github.com/Public-Health-Scotland/scotpho-profiles-tool/blob/master/shin
 }
 .landing-page-box-title {
   font-size: 16px;
-  text-align:center;
+  text-align: center;
   color: darkgreen;
   font-weight: bold;
   background-color: none;
-  width:100%;
+  width: 100%;
   max-height: 20px;
   margin-top: 2vh;
+  margin-bottom: 3vh;
 }
 .landing-page-box-description {
   font-size: 12px;
   text-align: center;
   color: darkblue;
   background-color: none;
-  width:100%;
+  width: 100%;
   max-height: 20px;
   margin-top: 2vh;
   padding-bottom: 3vh;
