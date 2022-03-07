@@ -33,8 +33,17 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
       DT::datatable(
         data_data()$value,
         selection = "single",
+        class = "nowrap",  # stops row heights from growing
+        rownames = FALSE,
         options = list(
-          lengthChange = FALSE
+          scrollX = TRUE,
+          lengthChange = FALSE,
+          columnDefs = list(
+            list(
+              targets = "_all",
+              render = DT::JS(includeHTML("www/tooltip-on-hover.js"))
+            )
+          )
         )
       )
     })
@@ -42,7 +51,6 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
     observeEvent(input$back, {
       response$direction <- "back"
       response$val <- NULL
-      print("back")
     })
 
     output$potential_forward <- renderUI({
@@ -57,7 +65,6 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
         response$direction <- "forward"
         response$val <- data_data()$value$name[input$table1_rows_selected]
       }
-      print("forward")
     })
 
     return(response)

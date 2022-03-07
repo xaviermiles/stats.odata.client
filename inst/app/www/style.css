@@ -7,6 +7,18 @@ https://github.com/Public-Health-Scotland/scotpho-profiles-tool/blob/master/shin
   background-color: black;
 }
 
+
+table {
+  border: 1px solid gray;
+  table-layout: fixed;
+  width: 400px;
+}
+th, td {
+  width: 200px;
+  overflow: hidden;
+}
+
+
 /* landing page boxes */
 .landing-page-box {
   width: 100%;
