@@ -5,7 +5,36 @@
 
 # statsnz.odata.client
 
-The aim of statsnz.odata.client is to provide a simple shiny app that shows what datasets are in the Stats NZ Open Data API and allows for some basic filtering etc.
+The aim of the statsnz.odata.client pacakge is to provide some helpful functions to retrieve data from the Stats NZ OData API.
+
+Install by:
+```
+remote::install_github("xaviermiles/statsnz.odata.client")
+```
+Some examples of use:
+```
+library(statsnz.odata.client)
+set_secrets("subscription_key" = "<your key goes here>")
+
+df_to_browse_data <- get_catalogue()
+
+covid_indicators_metadata <- basic_get("Covid-19Indicators", "Resources")
+nzac_data <- basic_get(
+  "Covid-19Indicators", "Observations",
+  query = paste0(
+    "$filter=ResourceID eq 'CPACT12' and Label1 eq 'New Zealand Activity Index (NZAC)'",
+    "&$orderby=Period"
+  )
+)
+
+employ_metadata <- basic_get("EmploymentIndicators", "Resources")
+employ_row_counts <- basic_get(
+  "EmploymentIndicators", "Observations",
+  query = "$apply=groupby((ResourceID),aggregate($count as count))"
+)
+```
+
+This package also powers a simple shiny app that shows what datasets are in the API and (TODO->) allows for some basic filtering etc.
 
 ## Code of Conduct
 
