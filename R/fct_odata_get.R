@@ -74,7 +74,6 @@ build_basic_url <- function(endpoint, entity = "", query = "") {
 #'
 #' @description Derived from https://github.com/StatisticsNZ/open-data-api/
 #'
-#' @param endpoint API endpoint.
 #' @param timeout Timeout for the GET request, in seconds.
 #'
 #' @return A data frame containing the requested catalogue data. This is
@@ -82,15 +81,13 @@ build_basic_url <- function(endpoint, entity = "", query = "") {
 #' the more nested content.
 #'
 #' @export
-get_catalogue <- function(endpoint = "data.json", timeout = 60) {
+get_catalogue <- function(timeout = 60) {
   # TODO: would this ever need to page??
-  service <- get_golem_config("service_prd")
-  # TODO: as above re NULL service.
-  url <- utils::URLencode(glue::glue("{service}/{endpoint}"))
+  url <- build_basic_url("data.json")
   content <- send_get(url, timeout)
 
   if (!"dataset" %in% names(content))
-    stop("Response doesn't contain 'dataset'")
+    stop("Response doesn't contain 'dataset'.")
 
   catalogue <- tidyr::unnest_longer(content$dataset, distribution)
   return(catalogue)

@@ -4,11 +4,9 @@
 \alias{get_catalogue}
 \title{GET the catalogue of Stats NZ OData API.}
 \usage{
-get_catalogue(endpoint = "data.json", timeout = 60)
+get_catalogue(timeout = 60)
 }
 \arguments{
-\item{endpoint}{API endpoint.}
-
 \item{timeout}{Timeout for the GET request, in seconds.}
 }
 \value{
