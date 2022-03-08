@@ -21,6 +21,41 @@ basic_get <- function(endpoint, entity = "", query = "", timeout = 60) {
 }
 
 
+#' Parallelised version of basic_get, for requesting larger amounts of data.
+#'
+#' @description This uses multiples cores to make concurrent API requests, and
+#' then merges the individual results. There is some upfront work required to
+#' determine the series of smaller requests, so this function shouldn't be used
+#' for "small" requests.
+#'
+#' FIXME: currently ignores query and timeout args
+#'
+#' @inheritParams basic_get
+#' @param splitting_col The column on which to split the overall request into
+#'   bite-size portions.
+#' @param max_cores Maximum number of cores. This will be overruled if there is
+#'   less cores available.
+#' @param rows_per_request The approx. number of rows per individual request.
+#'   This can be used to tune performance.
+#'
+#' @export
+parallel_get <- function(endpoint, entity = "", query = "", timeout = 60,
+                         splitting_col = "ResourceID",
+                         max_cores = 4,
+                         rows_per_request = 20000) {
+  n_cores <- future::availableCores()
+  future::plan("multisession", worker = min(n_cores, max_cores))
+  var_queries <- split_var_into_queries(splitting_col, rows_per_request)
+  bunched_response <- furrr::future_map(var_queries, ~ basic_get(endpoint, entity = entity, query = .x))
+  merged <- dplyr::bind_rows(bunched_response)
+  # Check that no rows have been dropped along the way
+  expected_num_rows <- basic_get(endpoint, entity = entity, query = "&$apply=aggregate($count as count)")
+  if (nrow(merged) < expected_num_rows)
+    warning(glue::glue("Process returned {nrow(merged)} of expected {expected_num_rows} rows."))
+  return(merged)
+}
+
+
 #' @name detailed_get
 #'
 #' @param endpoint API endpoint. Required.
