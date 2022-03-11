@@ -38,8 +38,7 @@ app_server <- function(input, output, session) {
     req(!is.null(resp_endpoint$direction))
 
     if (resp_endpoint$direction == "forward") {
-      appendTab("main_panel", mod_table_ui("entity_view"), #target = "entity_tab", #position = "after",
-                select = TRUE)
+      appendTab("main_panel", mod_table_ui("entity_view"), select = TRUE)
     } else if (resp_endpoint$direction == "back") {
       resp_catalogue$val <- NULL  # clear endpoint selection
       updateTabsetPanel(session, "main_panel", selected = "catalogue")

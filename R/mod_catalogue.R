@@ -34,11 +34,11 @@ mod_catalogue_server <- function(id) {
 
     get_landing_page_box <- function(title, button_name, description) {
       div(
-        class="landing-page-box",
+        class = "landing-page-box",
         div(title, class = "landing-page-box-title"),
         div(description, class = "landing-page-box-description"),
         # div(class = "landing-page-icon"),
-        actionButton(NS(id, button_name), NULL, class="landing-page-button")
+        actionButton(NS(id, button_name), NULL, class = "landing-page-button")
       )
     }
 
@@ -63,7 +63,7 @@ mod_catalogue_server <- function(id) {
       purrr::map(
         1:NUM_FLUID_ROWS,
         function(i) {
-          catalogue_row_nums <- (3*i - 2):(3*i)
+          catalogue_row_nums <- (3 * i - 2):(3 * i)
           row_of_boxes <- get_row_of_boxes(catalogue_row_nums)
           return(row_of_boxes)
         }

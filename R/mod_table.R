@@ -70,9 +70,3 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
     return(response)
   })
 }
-
-## To be copied in the UI
-# mod_table_ui("table_ui_1")
-
-## To be copied in the server
-# mod_table_server("table_ui_1")
