@@ -47,4 +47,4 @@ Collate:
     'mod_catalogue.R'
     'mod_table.R'
     'run_app.R'
-    'utils_internals.R'
+    'statsnz.odata.client.R'

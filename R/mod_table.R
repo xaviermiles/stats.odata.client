@@ -41,7 +41,7 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
           columnDefs = list(
             list(
               targets = "_all",
-              render = DT::JS(includeHTML("www/tooltip-on-hover.js"))
+              render = DT::JS(includeHTML(app_sys("www/tooltip-on-hover.js")))
             )
           )
         )
