@@ -35,24 +35,57 @@ basic_get <- function(endpoint, entity = "", query = "", timeout = 60) {
 #'   bite-size portions.
 #' @param max_cores Maximum number of cores. This will be overruled if there is
 #'   less cores available.
-#' @param rows_per_request The approx. number of rows per individual request.
+#' @param rows_per_query The approx. number of rows per individual request.
 #'   This can be used to tune performance.
 #'
 #' @export
 parallel_get <- function(endpoint, entity = "", query = "", timeout = 60,
                          splitting_col = "ResourceID",
                          max_cores = 4,
-                         rows_per_request = 20000) {
+                         rows_per_query = 20000) {
   n_cores <- future::availableCores()
   future::plan("multisession", worker = min(n_cores, max_cores))
-  var_queries <- split_var_into_queries(splitting_col, rows_per_request)
-  bunched_response <- furrr::future_map(var_queries, ~ basic_get(endpoint, entity = entity, query = .x))
+  queries <- get_bucketed_queries(splitting_col, rows_per_query,
+                                  endpoint, entity)
+  bunched_response <- furrr::future_map(queries, ~ basic_get(endpoint, entity = entity, query = .x))
   merged <- dplyr::bind_rows(bunched_response)
-  # Check that no rows have been dropped along the way
+  # Check that no rows have been dropped along the way :^)
   expected_num_rows <- basic_get(endpoint, entity = entity, query = "&$apply=aggregate($count as count)")
   if (nrow(merged) < expected_num_rows)
     warning(glue::glue("Process returned {nrow(merged)} of expected {expected_num_rows} rows."))
   return(merged)
+}
+
+
+#' Splits GET request into collection of smaller queries, along a given
+#' column. It splits the distinct values of this column into buckets such that
+#' each bucket has relatively similar total row count.
+#'
+#' @param endpoint API endpoint.
+#' @param entity API entity.
+#' @param splitting_col Column to split into buckets.
+#' @param rows_per_query Approx. number of rows per query.
+#' @noRd
+get_bucketed_queries <- function(splitting_col, rows_per_query, endpoint, entity) {
+  counter <- glue::glue(
+    "&$apply=groupby(({splitting_col}),aggregate($count as count))"
+  )
+  rows <- basic_get(endpoint, entity, query = counter) %>%
+    dplyr::arrange(count) %>%
+    dplyr::mutate(cumul_weight = cumsum(count))
+
+  # cut() requires breaks >=2, hence the max()
+  n_buckets <- max(ceiling(sum(rows$count) / rows_per_query), 2)
+  rows$bucket_num <- as.numeric(cut(rows$cumul_weight, n_buckets))
+  bucket_num_to_ids <- split(rows$ResourceID, rows$bucket)
+
+  purrr::map_chr(
+    unname(bucket_num_to_ids),
+    function(ids) {
+      quoted <- sQuote(ids, q = FALSE)
+      glue::glue("{splitting_col} in ", glue::glue_collapse(quoted, sep = ","))
+    }
+  )
 }
 
 
