@@ -7,7 +7,10 @@ License: MIT + file LICENSE
 Imports: 
     attempt,
     config (>= 0.3.1),
+    dplyr,
     DT,
+    furrr,
+    future,
     glue,
     golem (>= 0.3.1),
     htmltools,
