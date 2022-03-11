@@ -28,6 +28,7 @@ jobs:
       - name: Setup R
         uses: r-lib/actions/setup-r@v1
         with:
+          r-version: '4.1.2'
           use-public-rspm: true
 
       - name: Install dependencies
@@ -40,11 +41,11 @@ jobs:
 
       - name: Deploy to shinyapps.io
         env:
-          RSCONNECT_TOKEN: ${{ secrets.RSCONNECT_TOKEN }}
-          RSCONNECT_SECRET: ${{ secrets.RSCONNECT_SECRET }}
+          SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+          SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: |
-          token = Sys.getenv("RSCONNECT_TOKEN")
-          secret = Sys.getenv("RSCONNECT_SECRET")
+          token = Sys.getenv("SHINYAPPS_TOKEN")
+          secret = Sys.getenv("SHINYAPPS_SECRET")
           rsconnect::setAccountInfo("xavier-miles", token, secret)
           rsconnect::deployApp(appName = "statsnz_odata_client", forceUpdate = TRUE, lint = FALSE)
         shell: Rscript {0}
