@@ -44,7 +44,7 @@ parallel_get <- function(endpoint, entity = "", query = "", timeout = 60,
                          max_cores = 4,
                          rows_per_query = 20000) {
   n_cores <- future::availableCores()
-  future::plan("multisession", worker = min(n_cores, max_cores))
+  future::plan("multisession", workers = min(n_cores, max_cores))
   queries <- get_bucketed_queries(splitting_col, rows_per_query,
                                   endpoint, entity)
   bunched_response <- furrr::future_map(queries, ~ basic_get(endpoint, entity = entity, query = .x))
