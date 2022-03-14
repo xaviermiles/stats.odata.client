@@ -51,12 +51,6 @@ parallel_get <- function(endpoint, entity = "", query = "", timeout = 10,
     queries,
     ~ basic_get(endpoint, entity = entity, query = .x, timeout = timeout)
   )
-  # Check that no rows have been dropped along the way :^)
-  expected_num_rows <- basic_get(endpoint, entity = entity,
-                                 query = "&$apply=aggregate($count as count)",
-                                 timeout = timeout)
-  if (nrow(merged) < expected_num_rows)
-    warning(glue::glue("Process returned {nrow(merged)} of expected {expected_num_rows} rows."))
   return(merged)
 }
 
