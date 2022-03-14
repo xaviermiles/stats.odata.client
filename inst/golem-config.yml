@@ -1,5 +1,5 @@
 default:
-  golem_name: statsnz.odata.client
+  golem_name: statsnz.odata
   golem_version: 0.0.0.9000
   app_prod: no
   service_prd: https://api.stats.govt.nz/opendata/v1

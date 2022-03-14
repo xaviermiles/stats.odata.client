@@ -1,4 +1,4 @@
 library(testthat)
-library(statsnz.odata.client)
+library(statsnz.odata)
 
-test_check("statsnz.odata.client")
+test_check("statsnz.odata")

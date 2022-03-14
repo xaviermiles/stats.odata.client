@@ -9,7 +9,7 @@
 #'
 #' @noRd
 app_sys <- function(...) {
-  system.file(..., package = "statsnz.odata.client")
+  system.file(..., package = "statsnz.odata")
 }
 
 

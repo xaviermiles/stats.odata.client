@@ -2,14 +2,14 @@ test_that("Getting/setting subscription key works", {
   # Before ----
   DEFAULT_SECRETS_NAME <- "golem-secrets.yml"
   default_secrets_path <- system.file(DEFAULT_SECRETS_NAME,
-                                      package = "statsnz.odata.client")
+                                      package = "statsnz.odata")
   if (default_secrets_path != "") {
     # Move out of the way, will restore afterwards
     legit_secrets <- readLines(default_secrets_path)
     file.remove(default_secrets_path)
   } else {
     # Create it for use in testing
-    default_secrets_path <- system.file(package = "statsnz.odata.client") %>%
+    default_secrets_path <- system.file(package = "statsnz.odata") %>%
       file.path(., "golem-secrets.yml")
   }
 
@@ -44,7 +44,7 @@ test_that("Getting/setting subscription key works", {
 
   # again, but specifying file in different location
   tmp2 <- tempfile("golem-secrets-testing.yml",
-                   tmpdir = system.file(package = "statsnz.odata.client"))
+                   tmpdir = system.file(package = "statsnz.odata"))
   writeLines(c("default:",
                "  subscription_key: dummy-password-two"),
              con = tmp2)

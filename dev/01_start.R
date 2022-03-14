@@ -19,7 +19,7 @@
 ## to change the name in the app_sys() function in app_config.R /!\
 ##
 golem::fill_desc(
-  pkg_name = "statsnz.odata.client",
+  pkg_name = "statsnz.odata",
   pkg_title = "Simple app to browse Stats OData API",
   pkg_description = paste0(
     "Graphical interface to browse the datasets in the Stats Odata API and ",
@@ -28,7 +28,7 @@ golem::fill_desc(
   author_first_name = "Xavier",
   author_last_name = "Miles",
   author_email = "xaviermiles377@gmail.com",
-  repo_url = "https://github.com/xaviermiles/statsnz.odata.client"
+  repo_url = "https://github.com/xaviermiles/statsnz.odata"
 )
 
 ## Set {golem} options ----
