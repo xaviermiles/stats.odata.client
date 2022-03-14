@@ -28,7 +28,7 @@ basic_get <- function(endpoint, entity = "", query = "", timeout = 60) {
 #' determine the series of smaller requests, so this function shouldn't be used
 #' for "small" requests.
 #'
-#' FIXME: currently ignores query and timeout args
+#' FIXME: currently ignores query arg
 #'
 #' @inheritParams basic_get
 #' @param splitting_col The column on which to split the overall request into
@@ -39,18 +39,22 @@ basic_get <- function(endpoint, entity = "", query = "", timeout = 60) {
 #'   This can be used to tune performance.
 #'
 #' @export
-parallel_get <- function(endpoint, entity = "", query = "", timeout = 60,
+parallel_get <- function(endpoint, entity = "", query = "", timeout = 10,
                          splitting_col = "ResourceID",
                          max_cores = 4,
                          rows_per_query = 20000) {
   n_cores <- future::availableCores()
   future::plan("multisession", workers = min(n_cores, max_cores))
   queries <- get_bucketed_queries(splitting_col, rows_per_query,
-                                  endpoint, entity)
-  bunched_response <- furrr::future_map(queries, ~ basic_get(endpoint, entity = entity, query = .x))
-  merged <- dplyr::bind_rows(bunched_response)
+                                  endpoint, entity, timeout)
+  merged <- furrr::future_map_dfr(
+    queries,
+    ~ basic_get(endpoint, entity = entity, query = .x, timeout = timeout)
+  )
   # Check that no rows have been dropped along the way :^)
-  expected_num_rows <- basic_get(endpoint, entity = entity, query = "&$apply=aggregate($count as count)")
+  expected_num_rows <- basic_get(endpoint, entity = entity,
+                                 query = "&$apply=aggregate($count as count)",
+                                 timeout = timeout)
   if (nrow(merged) < expected_num_rows)
     warning(glue::glue("Process returned {nrow(merged)} of expected {expected_num_rows} rows."))
   return(merged)
@@ -61,29 +65,28 @@ parallel_get <- function(endpoint, entity = "", query = "", timeout = 60,
 #' column. It splits the distinct values of this column into buckets such that
 #' each bucket has relatively similar total row count.
 #'
-#' @param endpoint API endpoint.
-#' @param entity API entity.
 #' @param splitting_col Column to split into buckets.
 #' @param rows_per_query Approx. number of rows per query.
+#' + typical params
 #' @noRd
-get_bucketed_queries <- function(splitting_col, rows_per_query, endpoint, entity) {
+get_bucketed_queries <- function(splitting_col, rows_per_query, endpoint, entity, timeout) {
   counter <- glue::glue(
     "&$apply=groupby(({splitting_col}),aggregate($count as count))"
   )
-  rows <- basic_get(endpoint, entity, query = counter) %>%
+  rows <- basic_get(endpoint, entity, query = counter, timeout = timeout) %>%
     dplyr::arrange(count) %>%
     dplyr::mutate(cumul_weight = cumsum(count))
 
   # cut() requires breaks >=2, hence the max()
   n_buckets <- max(ceiling(sum(rows$count) / rows_per_query), 2)
   rows$bucket_num <- as.numeric(cut(rows$cumul_weight, n_buckets))
-  bucket_num_to_ids <- split(rows$ResourceID, rows$bucket)
+  bucket_num_to_vals <- split(rows$ResourceID, rows$bucket)
 
   purrr::map_chr(
-    unname(bucket_num_to_ids),
-    function(ids) {
-      quoted <- sQuote(ids, q = FALSE)
-      glue::glue("{splitting_col} in ", glue::glue_collapse(quoted, sep = ","))
+    unname(bucket_num_to_vals),
+    function(vals) {
+      quoted_vals <- glue::glue_collapse(sQuote(ids, q = FALSE), sep  = ",")
+      glue::glue("{splitting_col} in ({quoted_vals})")
     }
   )
 }
