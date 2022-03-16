@@ -28,7 +28,8 @@ basic_get <- function(endpoint, entity = "", query = "", timeout = 60) {
 #' determine the series of smaller requests, so this function shouldn't be used
 #' for "small" requests.
 #'
-#' FIXME: currently ignores query arg
+#' FIXME: support `query` that include $filter, this would require merging it
+#'        with the $filter generated with the `splitting_col`.
 #'
 #' @inheritParams basic_get
 #' @param splitting_col The column on which to split the overall request into
@@ -47,6 +48,13 @@ parallel_get <- function(endpoint, entity = "", query = "", timeout = 10,
   future::plan("multisession", workers = min(n_cores, max_cores))
   queries <- get_bucketed_queries(splitting_col, rows_per_query,
                                   endpoint, entity, timeout)
+  if (query != "") {
+    if (stringr::str_detect(query, "\\$filter=.*&+")) {
+      stop("This function is not smart enough for a `query` with a $filter.")
+    } else {
+      queries <- glue::glue("{queries}&{query}")
+    }
+  }
   merged <- furrr::future_map_dfr(
     queries,
     ~ basic_get(endpoint, entity = entity, query = .x, timeout = timeout)
