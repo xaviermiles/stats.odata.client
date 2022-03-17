@@ -8,10 +8,10 @@ parallel_get(
   endpoint,
   entity = "",
   query = "",
-  timeout = 60,
+  timeout = 10,
   splitting_col = "ResourceID",
   max_cores = 4,
-  rows_per_query = 20000
+  rows_per_query = 10000
 )
 }
 \arguments{
@@ -32,11 +32,15 @@ less cores available.}
 \item{rows_per_query}{The approx. number of rows per individual request.
 This can be used to tune performance.}
 }
+\value{
+A data frame containing the requested data.
+}
 \description{
 This uses multiples cores to make concurrent API requests, and
 then merges the individual results. There is some upfront work required to
 determine the series of smaller requests, so this function shouldn't be used
 for "small" requests.
 
-FIXME: currently ignores query and timeout args
+FIXME: support `query` that include $filter, this would require merging it
+       with the $filter generated with the `splitting_col`.
 }
