@@ -1,8 +1,3 @@
-# TODO: allow querying UAT API - argument in get functions?
-#       This would need to switch between get_golem_config & get_golem_secret.
-# TODO: how to effectively inheritParam with unexported functions?
-
-
 #' Basic GET request to Stats NZ OData API, with paging when required.
 #'
 #' @description Derived from https://github.com/StatisticsNZ/open-data-api/
@@ -39,11 +34,25 @@ basic_get <- function(endpoint, entity = "", query = "", timeout = 60) {
 #' @param rows_per_query The approx. number of rows per individual request.
 #'   This can be used to tune performance.
 #'
+#' @return A data frame containing the requested data.
+#'
 #' @export
 parallel_get <- function(endpoint, entity = "", query = "", timeout = 10,
                          splitting_col = "ResourceID",
                          max_cores = 4,
-                         rows_per_query = 20000) {
+                         rows_per_query = 10000) {
+  detailed_parallel_get()$value
+}
+
+
+#' Parallelised version of detailed_get
+#' @inheritParams parallel_get
+#' @return List of the response's content (initial_url ignores splitting).
+#' @noRd
+detailed_parallel_get <- function(endpoint, entity = "", query = "", timeout = 10,
+                                  splitting_col = "ResourceID",
+                                  max_cores = 4,
+                                  rows_per_query = 10000) {
   n_cores <- future::availableCores()
   future::plan("multisession", workers = min(n_cores, max_cores))
   queries <- get_bucketed_queries(splitting_col, rows_per_query,
@@ -59,7 +68,8 @@ parallel_get <- function(endpoint, entity = "", query = "", timeout = 10,
     queries,
     ~ basic_get(endpoint, entity = entity, query = .x, timeout = timeout)
   )
-  return(merged)
+  initial_url <- build_basic_url(endpoint, entity, query)
+  return(list(value = merged, initial_url = initial_url))
 }
 
 
@@ -87,7 +97,7 @@ get_bucketed_queries <- function(splitting_col, rows_per_query, endpoint, entity
   purrr::map_chr(
     unname(bucket_num_to_vals),
     function(vals) {
-      quoted_vals <- glue::glue_collapse(sQuote(ids, q = FALSE), sep  = ",")
+      quoted_vals <- glue::glue_collapse(sQuote(vals, q = FALSE), sep  = ",")
       glue::glue("{splitting_col} in ({quoted_vals})")
     }
   )

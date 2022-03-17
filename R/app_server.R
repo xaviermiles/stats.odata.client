@@ -21,7 +21,10 @@ app_server <- function(input, output, session) {
   data_data <- reactive({
     # TODO: return something for catalogue so URL can still be displayed
     req(selected()$endpoint != "")
-    detailed_get(selected()$endpoint, selected()$entity)
+    if (selected()$entity == "")
+      detailed_get(selected()$endpoint, selected()$entity)
+    else
+      detailed_parallel_get(selected()$endpoint, selected()$entity)
   })
 
   observeEvent(resp_catalogue$direction, {
