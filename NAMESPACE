@@ -2,6 +2,7 @@
 
 export(basic_get)
 export(get_catalogue)
+export(parallel_get)
 export(run_app)
 export(set_secrets)
 import(shiny)

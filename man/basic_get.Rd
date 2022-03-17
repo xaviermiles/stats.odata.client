@@ -4,7 +4,7 @@
 \alias{basic_get}
 \title{Basic GET request to Stats NZ OData API, with paging when required.}
 \usage{
-basic_get(endpoint, entity = "", query = "", timeout = 60)
+basic_get(endpoint, entity = "", query = "", timeout = 10)
 }
 \arguments{
 \item{endpoint}{API endpoint. Required.}
