@@ -10,9 +10,31 @@
 #' @return A data frame containing the requested data.
 #'
 #' @export
-basic_get <- function(endpoint, entity = "", query = "", timeout = 60) {
+basic_get <- function(endpoint, entity = "", query = "", timeout = 10) {
   # TODO: could query be more R style? list of query types rather than just string?
   detailed_get(endpoint, entity, query, timeout)$value
+}
+
+
+#' "Detailed" version of basic_get in that it returns a list with both the
+#' requested data and the initial request url.
+#' @include utils_odata_get.R
+#' @noRd
+detailed_get <- function(endpoint, entity = "", query = "", timeout = 10) {
+  initial_url <- build_basic_url(endpoint, entity, query)
+  top_query <- grepl("$top", query, fixed = TRUE)
+
+  result <- data.frame()
+  url <- initial_url
+  while (!is.null(url)) {
+    content <- send_get(url, timeout)
+    result <- rbind(result, content$value)
+    if (top_query)
+      break
+    url <- content$"@odata.nextLink"
+  }
+
+  return(list(value = result, initial_url = initial_url))
 }
 
 
@@ -46,8 +68,7 @@ parallel_get <- function(endpoint, entity = "", query = "", timeout = 10,
 
 
 #' Parallelised version of detailed_get
-#' @inheritParams parallel_get
-#' @return List of the response's content (initial_url ignores splitting).
+#' @inherit parallel_get
 #' @noRd
 detailed_parallel_get <- function(endpoint, entity = "", query = "", timeout = 10,
                                   splitting_col = "ResourceID",
@@ -104,35 +125,6 @@ get_bucketed_queries <- function(splitting_col, rows_per_query, endpoint, entity
 }
 
 
-#' @name detailed_get
-#'
-#' @param endpoint API endpoint. Required.
-#' @param entity Data entity.
-#' @param query Query URL character (not URL-encoded).
-#' @param timeout Timeout for the GET request(s), in seconds.
-#'
-#' @return A list of the response's contents.
-#'
-#' @include utils_odata_get.R
-#' @noRd
-detailed_get <- function(endpoint, entity = "", query = "", timeout = 60) {
-  initial_url <- build_basic_url(endpoint, entity, query)
-  top_query <- grepl("$top", query, fixed = TRUE)
-
-  result <- data.frame()
-  url <- initial_url
-  while (!is.null(url)) {
-    content <- send_get(url, timeout)
-    result <- rbind(result, content$value)
-    if (top_query)
-      break
-    url <- content$"@odata.nextLink"
-  }
-
-  return(list(value = result, initial_url = initial_url))
-}
-
-
 #' Constructs request URLs.
 #'
 #' @param endpoint API endpoint. Required.
@@ -157,14 +149,15 @@ build_basic_url <- function(endpoint, entity = "", query = "") {
 #'
 #' @description Derived from https://github.com/StatisticsNZ/open-data-api/
 #'
+#' The returned data is generally not a "tidy dataset" so the R data frame
+#' will use prefixes to represent the nested content.
+#'
 #' @param timeout Timeout for the GET request, in seconds.
 #'
-#' @return A data frame containing the requested catalogue data. This is
-#' generally not a "tidy dataset" since it uses prefixes to represent some of
-#' the more nested content.
+#' @return A data frame containing the requested catalogue data.
 #'
 #' @export
-get_catalogue <- function(timeout = 60) {
+get_catalogue <- function(timeout = 10) {
   # TODO: would this ever need to page??
   url <- build_basic_url("data.json")
   content <- send_get(url, timeout)

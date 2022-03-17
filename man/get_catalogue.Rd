@@ -4,16 +4,17 @@
 \alias{get_catalogue}
 \title{GET the catalogue of Stats NZ OData API.}
 \usage{
-get_catalogue(timeout = 60)
+get_catalogue(timeout = 10)
 }
 \arguments{
 \item{timeout}{Timeout for the GET request, in seconds.}
 }
 \value{
-A data frame containing the requested catalogue data. This is
-generally not a "tidy dataset" since it uses prefixes to represent some of
-the more nested content.
+A data frame containing the requested catalogue data.
 }
 \description{
 Derived from https://github.com/StatisticsNZ/open-data-api/
+
+The returned data is generally not a "tidy dataset" so the R data frame
+will use prefixes to represent the nested content.
 }
