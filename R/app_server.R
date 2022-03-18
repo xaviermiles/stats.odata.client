@@ -64,6 +64,6 @@ app_server <- function(input, output, session) {
   })
 
   output$footer_text <- renderText({
-    glue::glue("Get this info: {data_data()$initial_url}")
+    glue("Get this info: {data_data()$initial_url}")
   })
 }

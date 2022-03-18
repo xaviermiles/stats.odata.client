@@ -82,7 +82,7 @@ detailed_parallel_get <- function(endpoint, entity = "", query = "", timeout = 1
     if (stringr::str_detect(query, "\\$filter=.*&+")) {
       stop("This function is not smart enough for a `query` with a $filter.")
     } else {
-      queries <- glue::glue("{queries}&{query}")
+      queries <- glue("{queries}&{query}")
     }
   }
   merged <- furrr::future_map_dfr(
@@ -103,7 +103,7 @@ detailed_parallel_get <- function(endpoint, entity = "", query = "", timeout = 1
 #' + typical params
 #' @noRd
 get_bucketed_queries <- function(splitting_col, rows_per_query, endpoint, entity, timeout) {
-  counter <- glue::glue(
+  counter <- glue(
     "&$apply=groupby(({splitting_col}),aggregate($count as count))"
   )
   rows <- basic_get(endpoint, entity, query = counter, timeout = timeout) %>%
@@ -118,8 +118,8 @@ get_bucketed_queries <- function(splitting_col, rows_per_query, endpoint, entity
   purrr::map_chr(
     unname(bucket_num_to_vals),
     function(vals) {
-      quoted_vals <- glue::glue_collapse(sQuote(vals, q = FALSE), sep  = ",")
-      glue::glue("{splitting_col} in ({quoted_vals})")
+      quoted_vals <- glue_collapse(sQuote(vals, q = FALSE), sep  = ",")
+      glue("{splitting_col} in ({quoted_vals})")
     }
   )
 }
@@ -135,11 +135,11 @@ get_bucketed_queries <- function(splitting_col, rows_per_query, endpoint, entity
 build_basic_url <- function(endpoint, entity = "", query = "") {
   # TODO: check for NULL service. Here or somewhere else?
   service <- get_golem_config("service_prd")
-  url <- glue::glue("{service}/{endpoint}")
+  url <- glue("{service}/{endpoint}")
   if (entity != "")
-    url <- glue::glue("{url}/{entity}")
+    url <- glue("{url}/{entity}")
   if (query != "")
-    url <- glue::glue("{url}?{query}")
+    url <- glue("{url}?{query}")
 
   return(utils::URLencode(url))
 }

@@ -21,7 +21,7 @@ send_get <- function(url, timeout) {
   )
 
   if (httr::http_error(response)) {
-    stop(glue::glue(
+    stop(glue(
       "Sending GET request failed; \"{httr::http_status(response)$message}\""
     ))
   }

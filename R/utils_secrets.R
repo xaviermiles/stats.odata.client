@@ -19,7 +19,7 @@ get_secret <- function(
   file = app_sys("golem-secrets.yml"),
   use_parent = TRUE
 ) {
-  option_value <- getOption(glue::glue("golem.secrets.{value}"))
+  option_value <- getOption(glue("golem.secrets.{value}"))
   if (!is.null(option_value))
     return(option_value)
 
@@ -53,7 +53,7 @@ set_secrets <- function(...) {
   for (name in names(args)) {
     if (name == "")
       next
-    setOption(glue::glue("golem.secrets.{name}"), args[[name]])
+    setOption(glue("golem.secrets.{name}"), args[[name]])
   }
 }
 
