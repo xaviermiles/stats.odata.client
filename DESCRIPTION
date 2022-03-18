@@ -2,7 +2,7 @@ Package: statsnz.odata
 Title: Simple app to browse Stats OData API
 Version: 0.0.0.9000
 Authors@R: person('Xavier', 'Miles', email = 'xaviermiles377@gmail.com', role = c('cre', 'aut'))
-Description: Graphical interface to browse the datasets in the Stats Odata API and get help with building queries.
+Description: Graphical interface to browse the datasets in the Stats OData API and get help with building queries.
 License: MIT + file LICENSE
 Imports: 
     attempt,

@@ -22,7 +22,7 @@ golem::fill_desc(
   pkg_name = "statsnz.odata",
   pkg_title = "Simple app to browse Stats OData API",
   pkg_description = paste0(
-    "Graphical interface to browse the datasets in the Stats Odata API and ",
+    "Graphical interface to browse the datasets in the Stats OData API and ",
     "get help with building queries."
   ),
   author_first_name = "Xavier",

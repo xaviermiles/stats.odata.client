@@ -6,7 +6,7 @@
 \alias{statsnz.odata-package}
 \title{statsnz.odata: Simple app to browse Stats OData API}
 \description{
-Graphical interface to browse the datasets in the Stats Odata API and get help with building queries.
+Graphical interface to browse the datasets in the Stats OData API and get help with building queries.
 }
 \details{
 Stats NZ OData API Client
