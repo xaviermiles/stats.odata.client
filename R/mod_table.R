@@ -30,6 +30,8 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
     response <- reactiveValues(direction = NULL, val = NULL)
 
     output$table1 <- DT::renderDT({
+      tooltip_js <- includeHTML(app_sys("app/www/tooltip-on-hover.js"))
+
       DT::datatable(
         data_data()$value,
         selection = "single",
@@ -41,7 +43,7 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
           columnDefs = list(
             list(
               targets = "_all",
-              render = DT::JS(includeHTML(app_sys("www/tooltip-on-hover.js")))
+              render = DT::JS(tooltip_js)
             )
           )
         )
