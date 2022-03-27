@@ -52,3 +52,4 @@ Collate:
     'mod_entity_table.R'
     'run_app.R'
     'statsnz.odata.R'
+    'tbl-odata.R'

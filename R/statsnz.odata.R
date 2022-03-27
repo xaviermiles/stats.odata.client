@@ -2,7 +2,7 @@
 #' Stats NZ OData API Client
 #'
 #' @keywords internal
-#' @importFrom rlang !! :=
+#' @importFrom rlang !! := %||%
 #' @importFrom magrittr %>%
 #' @importFrom glue glue glue_collapse
 "_PACKAGE"
