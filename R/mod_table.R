@@ -52,7 +52,7 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
 
     observeEvent(input$back, {
       response$direction <- "back"
-      response$val <- NULL
+      response$val <- ""
     })
 
     output$potential_forward <- renderUI({

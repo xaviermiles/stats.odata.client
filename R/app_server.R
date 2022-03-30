@@ -16,19 +16,17 @@ app_server <- function(input, output, session) {
 
   # Observe and update `request` -----------------------------------------------
   observeEvent(resp_catalogue$val, {
-     if (is.null(resp_catalogue$val))
-       request$endpoint <- ""
-     request$endpoint <- resp_catalogue$val
+    req(is.character(resp_catalogue$val))
+    request$endpoint <- resp_catalogue$val
   })
 
   observeEvent(resp_endpoint$val, {
-    if (is.null(resp_endpoint$val))
-      request$entity <- ""
+    req(is.character(resp_endpoint$val))
     request$entity <- resp_endpoint$val
   })
 
   data_data <- reactive({
-    req(request$endpoint != "")
+    req(nchar(request$endpoint) > 0)
     if (request$entity == "")
       detailed_get(request$endpoint, request$entity, query = request$query)
     else
@@ -37,9 +35,11 @@ app_server <- function(input, output, session) {
 
   output$footer_text <- renderText({
     if (request$endpoint == "")
-      glue("Get this info: {build_basic_url('data.json')}")  # catalogue
+      url <- build_basic_url('data.json')  # catalogue
     else
-      glue("Get this info: {data_data()$initial_url}")
+      url <- data_data()$initial_url
+
+    glue("Get this info: {url}")
   })
 
   # Handle direction -----------------------------------------------------------
@@ -59,7 +59,7 @@ app_server <- function(input, output, session) {
     if (resp_endpoint$direction == "forward") {
       appendTab("main_panel", mod_table_ui("entity_view"), select = TRUE)
     } else if (resp_endpoint$direction == "back") {
-      resp_catalogue$val <- NULL  # clear endpoint selection
+      resp_catalogue$val <- ""
       updateTabsetPanel(session, "main_panel", selected = "catalogue")
       removeTab("main_panel", target = "endpoint_view")
     }
@@ -71,7 +71,7 @@ app_server <- function(input, output, session) {
     req(!is.null(resp_entity$direction))
 
     if (resp_entity$direction == "back") {
-      resp_endpoint$val <- NULL  # clear entity selection
+      resp_endpoint$val <- ""
       updateTabsetPanel(session, "main_panel", selected = "endpoint_view")
       removeTab("main_panel", target = "entity_view")
     }
