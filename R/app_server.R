@@ -19,7 +19,6 @@ app_server <- function(input, output, session) {
   })
 
   data_data <- reactive({
-    # TODO: return something for catalogue so URL can still be displayed
     req(selected()$endpoint != "")
     if (selected()$entity == "")
       detailed_get(selected()$endpoint, selected()$entity)
@@ -64,6 +63,9 @@ app_server <- function(input, output, session) {
   })
 
   output$footer_text <- renderText({
-    glue("Get this info: {data_data()$initial_url}")
+    if (request$endpoint == "")
+      glue("Get this info: {build_basic_url('data.json')}")  # catalogue
+    else
+      glue("Get this info: {data_data()$initial_url}")
   })
 }
