@@ -7,25 +7,42 @@
 app_server <- function(input, output, session) {
   reset_response <- function(resp) resp$direction <- NULL
 
+  # Main objects ---------------------------------------------------------------
+  request <- reactiveValues(endpoint = "", entity = "", query = "$top=10")
+
   resp_catalogue <- mod_catalogue_server("catalogue_1")
   resp_endpoint <- mod_table_server("endpoint_view", data_data)
   resp_entity <- mod_table_server("entity_view", data_data, buttons = c("back"))
 
-  selected <- reactive({
-    list(
-      endpoint = ifelse(!is.null(resp_catalogue$val), resp_catalogue$val, ""),
-      entity = ifelse(!is.null(resp_endpoint$val), resp_endpoint$val, "")
-    )
+  # Observe and update `request` -----------------------------------------------
+  observeEvent(resp_catalogue$val, {
+     if (is.null(resp_catalogue$val))
+       request$endpoint <- ""
+     request$endpoint <- resp_catalogue$val
+  })
+
+  observeEvent(resp_endpoint$val, {
+    if (is.null(resp_endpoint$val))
+      request$entity <- ""
+    request$entity <- resp_endpoint$val
   })
 
   data_data <- reactive({
-    req(selected()$endpoint != "")
-    if (selected()$entity == "")
-      detailed_get(selected()$endpoint, selected()$entity)
+    req(request$endpoint != "")
+    if (request$entity == "")
+      detailed_get(request$endpoint, request$entity, query = request$query)
     else
-      detailed_parallel_get(selected()$endpoint, selected()$entity)
+      detailed_parallel_get(request$endpoint, request$entity, query = request$query)
   })
 
+  output$footer_text <- renderText({
+    if (request$endpoint == "")
+      glue("Get this info: {build_basic_url('data.json')}")  # catalogue
+    else
+      glue("Get this info: {data_data()$initial_url}")
+  })
+
+  # Handle direction -----------------------------------------------------------
   observeEvent(resp_catalogue$direction, {
     req(!is.null(resp_catalogue$direction))
 
@@ -60,12 +77,5 @@ app_server <- function(input, output, session) {
     }
 
     reset_response(resp_entity)
-  })
-
-  output$footer_text <- renderText({
-    if (request$endpoint == "")
-      glue("Get this info: {build_basic_url('data.json')}")  # catalogue
-    else
-      glue("Get this info: {data_data()$initial_url}")
   })
 }
