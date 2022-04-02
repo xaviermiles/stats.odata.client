@@ -8,11 +8,11 @@ app_server <- function(input, output, session) {
   reset_response <- function(resp) resp$direction <- NULL
 
   # Main objects ---------------------------------------------------------------
-  request <- reactiveValues(endpoint = "", entity = "", query = "$top=10")
+  request <- reactiveValues(endpoint = "", entity = "")
 
-  resp_catalogue <- mod_catalogue_server("catalogue_1")
-  resp_endpoint <- mod_table_server("endpoint_view", data_data)
-  resp_entity <- mod_table_server("entity_view", data_data, buttons = c("back"))
+  resp_catalogue <- mod_catalogue_server("catalogue1")
+  resp_endpoint <- mod_endpoint_table_server("endpoint1", request)
+  resp_entity <- mod_entity_table_server("entity1", request)
 
   # Observe and update `request` -----------------------------------------------
   observeEvent(resp_catalogue$val, {
@@ -25,23 +25,15 @@ app_server <- function(input, output, session) {
     request$entity <- resp_endpoint$val
   })
 
-  reactive({
-    if (resp_entity$query != "")
-      request$query <- resp_entity$query
-    else if (resp_endpoint$query != "")
-      request$query <- resp_endpoint$query
-  })
-
-  data_data <- reactive({
-    req(nchar(request$endpoint) > 0)
-    detailed_get(request$endpoint, request$entity, query = request$query)
-  })
-
-  output$footer_text <- renderText({
-    if (request$endpoint == "")
-      url <- build_basic_url('data.json')  # catalogue
+  output$footer_url <- renderText({
+    if (input$main_panel == "catalogue")
+      url <- build_basic_url('data.json')
+    else if (is.character(resp_entity$initial_url))
+      url <- resp_entity$intial_url
+    else if (is.character(resp_endpoint$initial_url))
+      url <- resp_endpoint$initial_url
     else
-      url <- data_data()$initial_url
+      url <- ""
 
     glue("Get this info: {url}")
   })
@@ -51,7 +43,7 @@ app_server <- function(input, output, session) {
     req(!is.null(resp_catalogue$direction))
 
     if (resp_catalogue$direction == "forward") {
-      appendTab("main_panel", mod_table_ui("endpoint_view"), select = TRUE)
+      appendTab("main_panel", mod_endpoint_table_ui("endpoint1"), select = TRUE)
     }
 
     reset_response(resp_catalogue)
@@ -61,11 +53,11 @@ app_server <- function(input, output, session) {
     req(!is.null(resp_endpoint$direction))
 
     if (resp_endpoint$direction == "forward") {
-      appendTab("main_panel", mod_table_ui("entity_view"), select = TRUE)
+      appendTab("main_panel", mod_entity_table_ui("entity1"), select = TRUE)
     } else if (resp_endpoint$direction == "back") {
       resp_catalogue$val <- ""
       updateTabsetPanel(session, "main_panel", selected = "catalogue")
-      removeTab("main_panel", target = "endpoint_view")
+      removeTab("main_panel", target = "endpoint1")
     }
 
     reset_response(resp_endpoint)
@@ -76,8 +68,8 @@ app_server <- function(input, output, session) {
 
     if (resp_entity$direction == "back") {
       resp_endpoint$val <- ""
-      updateTabsetPanel(session, "main_panel", selected = "endpoint_view")
-      removeTab("main_panel", target = "entity_view")
+      updateTabsetPanel(session, "main_panel", selected = "endpoint1")
+      removeTab("main_panel", target = "entity1")
     }
 
     reset_response(resp_entity)

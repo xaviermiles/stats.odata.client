@@ -13,7 +13,7 @@ app_ui <- function(request) {
       tabsetPanel(
         tabPanel(
           "catalogue",
-          mod_catalogue_ui("catalogue_1")
+          mod_catalogue_ui("catalogue1")
         ),
         id = "main_panel",
         type = "hidden",
