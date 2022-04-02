@@ -9,11 +9,11 @@ app_ui <- function(request) {
     golem_add_external_resources(),
 
     fluidPage(
-      h1("Stats NZ Open Data API"),
+      h1("Stats NZ OData API"),
       tabsetPanel(
         tabPanel(
           "catalogue",
-          mod_catalogue_ui("catalogue_1")
+          mod_catalogue_ui("catalogue1")
         ),
         id = "main_panel",
         type = "hidden",

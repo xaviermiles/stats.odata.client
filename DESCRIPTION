@@ -48,6 +48,7 @@ Collate:
     'utils_odata_get.R'
     'fct_odata_get.R'
     'mod_catalogue.R'
-    'mod_table.R'
+    'mod_endpoint_table.R'
+    'mod_entity_table.R'
     'run_app.R'
     'statsnz.odata.R'
