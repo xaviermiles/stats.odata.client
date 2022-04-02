@@ -25,11 +25,11 @@ app_server <- function(input, output, session) {
     request$entity <- resp_endpoint$val
   })
 
-  output$footer_url <- renderText({
+  output$footer_text <- renderText({
     if (input$main_panel == "catalogue")
       url <- build_basic_url('data.json')
     else if (is.character(resp_entity$initial_url))
-      url <- resp_entity$intial_url
+      url <- resp_entity$initial_url
     else if (is.character(resp_endpoint$initial_url))
       url <- resp_endpoint$initial_url
     else
