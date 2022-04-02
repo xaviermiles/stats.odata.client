@@ -82,15 +82,15 @@ mod_entity_table_server <- function(id, request) {
       min_row(1) # reset when new entity is opened
     })
     observeEvent(input$page_back, {
-      min_row(
-        max(min_row() - 10, 1)
-      )
+      new <- min_row() - 10
+      if (new >= 1)
+        min_row(new)
     })
     observeEvent(input$page_forw, {
       req(is.numeric(full_count()))
-      min_row(
-        min(min_row() + 10, (full_count() %/% 10) * 10 + 1)
-      )
+      new <- min_row() + 10
+      if (new <= full_count())
+        min_row(new)
     })
 
     output$page_status <- reactive({
