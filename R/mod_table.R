@@ -27,7 +27,7 @@ mod_table_server <- function(id, data_data, buttons = c("back", "forward")) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    response <- reactiveValues(direction = NULL, val = NULL)
+    response <- reactiveValues(direction = NULL, val = NULL, query = "")
 
     output$table1 <- DT::renderDT({
       tooltip_js <- includeHTML(app_sys("app/www/tooltip-on-hover.js"))

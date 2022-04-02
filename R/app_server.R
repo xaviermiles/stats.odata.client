@@ -25,12 +25,16 @@ app_server <- function(input, output, session) {
     request$entity <- resp_endpoint$val
   })
 
+  reactive({
+    if (resp_entity$query != "")
+      request$query <- resp_entity$query
+    else if (resp_endpoint$query != "")
+      request$query <- resp_endpoint$query
+  })
+
   data_data <- reactive({
     req(nchar(request$endpoint) > 0)
-    if (request$entity == "")
-      detailed_get(request$endpoint, request$entity, query = request$query)
-    else
-      detailed_parallel_get(request$endpoint, request$entity, query = request$query)
+    detailed_get(request$endpoint, request$entity, query = request$query)
   })
 
   output$footer_text <- renderText({
