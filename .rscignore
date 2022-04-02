@@ -1,0 +1,9 @@
+.github
+.gitignore
+CODE_OF_CONDUCT.md
+dev
+man
+NEWS.md
+README.md
+statsnz.odata.Rproj
+tests

@@ -47,5 +47,5 @@ jobs:
           token = Sys.getenv("SHINYAPPS_TOKEN")
           secret = Sys.getenv("SHINYAPPS_SECRET")
           rsconnect::setAccountInfo("xavier-miles", token, secret)
-          rsconnect::deployApp(appName = "statsnz_odata_client", forceUpdate = TRUE, lint = FALSE)
+          rsconnect::deployApp(appName = "statsnz_odata", forceUpdate = TRUE, lint = FALSE)
         shell: Rscript {0}
