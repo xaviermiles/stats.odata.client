@@ -18,6 +18,8 @@ mod_entity_table_ui <- function(id) {
       column(2, actionButton(ns("page_forw"), "Next")),
       style = "padding-top:1vh; padding-bottom:1vh"
     ),
+    tags$h2("Extra special queries"),
+    uiOutput(ns("query_rows")),
     fluidRow(
       column(9, actionButton(ns("back"), "Scope out"))
     ),
@@ -32,6 +34,7 @@ mod_entity_table_server <- function(id, request) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    # Core ---------------------------------------------------------------------
     response <- reactiveValues(direction = NULL, val = NULL, initial_url = NULL)
     min_row <- reactiveVal(value = 1)
 
@@ -78,6 +81,7 @@ mod_entity_table_server <- function(id, request) {
       )
     })
 
+    # Paging dataset -----------------------------------------------------------
     observeEvent(request$entity, {
       min_row(1) # reset when new entity is opened
     })
@@ -102,6 +106,36 @@ mod_entity_table_server <- function(id, request) {
       response$direction <- "back"
       response$val <- ""
     })
+
+    # Extra special queries ----------------------------------------------------
+    output$query_rows <- renderUI({
+      get_query_row(glue("{request$entity}_arrange1"))
+    })
+
+    # Only supports "arrange" currently, but structure/UI is designed to be
+    # extendable to filter, select etc
+    get_query_row <- function(id) {
+      fluidRow(
+        column(3,
+          selectInput(
+            ns(glue("{id}_verb")), "",
+            choices = c("arrange")
+          ),
+        ),
+        column(3,
+          uiOutput(ns(glue("{id}_operator")))
+        ),
+        column(6,
+          selectizeInput(
+            ns(glue("{id}_val")), "",
+            choices = colnames(data_data()),
+            selected = input[[glue("{id}_val")]], # so choice is not reset when data_data() is regenerated
+            # options = list(plugins = list("remove_button", "drag_drop")),
+            multiple = TRUE
+          )
+        )
+      )
+    }
 
     return(response)
   })
