@@ -44,10 +44,16 @@ mod_entity_table_server <- function(id, request) {
     })
 
     query <- reactive({
+      arrange <- ifelse(
+        !is.null(input[[glue("{request$entity}_arrange1_val")]]),
+        glue_collapse(input[[glue("{request$entity}_arrange1_val")]], sep = ","),
+        ""
+      )
       skip <- min_row() - 1
       glue(
         "$top=10",
-        if (skip > 0) glue("&$skip={skip}") else ""
+        if (skip > 0) glue("&$skip={skip}") else "",
+        if (arrange != "") glue("&$orderby={arrange}") else ""
       )
     })
 
