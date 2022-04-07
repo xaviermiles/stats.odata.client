@@ -37,6 +37,13 @@ mod_entity_table_server <- function(id, request) {
     # Core ---------------------------------------------------------------------
     response <- reactiveValues(direction = NULL, val = NULL, initial_url = NULL)
     min_row <- reactiveVal(value = 1)
+    fields <- reactiveVal(value = character(0))
+    observeEvent(request$entity, {
+      req(nchar(request$entity) > 0)
+      fields(
+        colnames(basic_get(request$endpoint, request$entity, query = "$top=1"))
+      )
+    })
 
     full_count <- reactive({
       req(nchar(request$endpoint) > 0)
@@ -115,12 +122,24 @@ mod_entity_table_server <- function(id, request) {
 
     # Extra special queries ----------------------------------------------------
     output$query_rows <- renderUI({
-      get_query_row(glue("{request$entity}_arrange1"))
+      req(length(fields()) > 0)
+      get_query_row(glue("{request$entity}_arrange1"), fields())
+    })
+
+    observeEvent(fields(), {
+      req(length(fields()) > 0)
+      req(!is.null(input[[glue("{request$entity}_arrange1_val")]]))
+      updateSelectizeInput(
+        session,
+        glue("{request$entity}_arrange1_val"),
+        choices = fields(),
+        selected = new
+      )
     })
 
     # Only supports "arrange" currently, but structure/UI is designed to be
-    # extendable to filter, select etc
-    get_query_row <- function(id) {
+    # (hopefully) extendable to filter, select etc
+    get_query_row <- function(id, choices) {
       fluidRow(
         column(3,
           selectInput(
@@ -134,9 +153,8 @@ mod_entity_table_server <- function(id, request) {
         column(6,
           selectizeInput(
             ns(glue("{id}_val")), "",
-            choices = colnames(data_data()),
-            selected = input[[glue("{id}_val")]], # so choice is not reset when data_data() is regenerated
-            # options = list(plugins = list("remove_button", "drag_drop")),
+            choices = choices,
+            options = list(plugins = list("remove_button", "drag_drop")),
             multiple = TRUE
           )
         )
