@@ -86,6 +86,7 @@ mod_entity_table_server <- function(id, request) {
           columnDefs = list(
             list(
               targets = "_all",
+              orderable = FALSE,
               render = DT::JS(tooltip_js)
             )
           )

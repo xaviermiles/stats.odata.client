@@ -50,6 +50,7 @@ mod_endpoint_table_server <- function(id, request) {
           columnDefs = list(
             list(
               targets = "_all",
+              orderable = FALSE,
               render = DT::JS(tooltip_js)
             )
           )
