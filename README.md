@@ -5,13 +5,15 @@
 
 # statsnz.odata
 
-The aim of the statsnz.odata package is to provide some helpful functions to retrieve data from the Stats NZ OData API.
+The aim of the statsnz.odata package is to provide some helpful wrapper functions to retrieve data from the Stats NZ OData API.
+
+It also powers a simple shiny app that shows what datasets are in the API and allows for some basic ordering, filtering etc. [Click here](https://xavier-miles.shinyapps.io/statsnz_odata/) to see the live version.
 
 Install by:
 ```
-remote::install_github("xaviermiles/statsnz.odata")
+devtools::install_github("xaviermiles/statsnz.odata")
 ```
-Some examples of use:
+Some examples of using API wrappers:
 ```
 library(statsnz.odata)
 set_secrets("subscription_key" = "<your key goes here>")
@@ -33,8 +35,6 @@ employ_row_counts <- basic_get(
   query = "$apply=groupby((ResourceID),aggregate($count as count))"
 )
 ```
-
-This package also powers a simple shiny app that shows what datasets are in the API and (TODO->) allows for some basic filtering etc.
 
 ## Code of Conduct
 
