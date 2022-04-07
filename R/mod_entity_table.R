@@ -51,16 +51,15 @@ mod_entity_table_server <- function(id, request) {
     })
 
     query <- reactive({
-      arrange <- ifelse(
-        !is.null(input[[glue("{request$entity}_arrange1_val")]]),
-        glue_collapse(input[[glue("{request$entity}_arrange1_val")]], sep = ","),
-        ""
-      )
+      arrange <- input[[glue("{request$entity}_arrange1_val")]] %>%
+        glue_collapse(sep = ",") %>%
+        stringr::str_remove_all("\\(|\\)")
       skip <- min_row() - 1
+
       glue(
         "$top=10",
         if (skip > 0) glue("&$skip={skip}") else "",
-        if (arrange != "") glue("&$orderby={arrange}") else ""
+        if (length(arrange) == 1) glue("&$orderby={arrange}") else ""
       )
     })
 
@@ -140,6 +139,9 @@ mod_entity_table_server <- function(id, request) {
     # Only supports "arrange" currently, but structure/UI is designed to be
     # (hopefully) extendable to filter, select etc
     get_query_row <- function(id, choices) {
+      split_choices <- list(ascending = choices,
+                            descending = glue("{choices} (desc)"))
+
       fluidRow(
         column(3,
           selectInput(
@@ -147,15 +149,18 @@ mod_entity_table_server <- function(id, request) {
             choices = c("arrange")
           ),
         ),
-        column(3,
+        column(2,
           uiOutput(ns(glue("{id}_operator")))
         ),
-        column(6,
+        column(7,
           selectizeInput(
             ns(glue("{id}_val")), "",
-            choices = choices,
-            options = list(plugins = list("remove_button", "drag_drop")),
-            multiple = TRUE
+            choices = split_choices,
+            options = list(
+              plugins = list("drag_drop", "optgroup_columns", "remove_button")
+            ),
+            multiple = TRUE,
+            width = "90%"
           )
         )
       )
