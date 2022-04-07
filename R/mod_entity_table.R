@@ -18,6 +18,8 @@ mod_entity_table_ui <- function(id) {
       column(2, actionButton(ns("page_forw"), "Next")),
       style = "padding-top:1vh; padding-bottom:1vh"
     ),
+    tags$h2("Extra special queries"),
+    uiOutput(ns("query_rows")),
     fluidRow(
       column(9, actionButton(ns("back"), "Scope out"))
     ),
@@ -32,8 +34,16 @@ mod_entity_table_server <- function(id, request) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    # Core ---------------------------------------------------------------------
     response <- reactiveValues(direction = NULL, val = NULL, initial_url = NULL)
     min_row <- reactiveVal(value = 1)
+    fields <- reactiveVal(value = character(0))
+    observeEvent(request$entity, {
+      req(nchar(request$entity) > 0)
+      fields(
+        colnames(basic_get(request$endpoint, request$entity, query = "$top=1"))
+      )
+    })
 
     full_count <- reactive({
       req(nchar(request$endpoint) > 0)
@@ -41,10 +51,15 @@ mod_entity_table_server <- function(id, request) {
     })
 
     query <- reactive({
+      arrange <- input[[glue("{request$entity}_arrange1_val")]] %>%
+        glue_collapse(sep = ",") %>%
+        stringr::str_remove_all("\\(|\\)")
       skip <- min_row() - 1
+
       glue(
         "$top=10",
-        if (skip > 0) glue("&$skip={skip}") else ""
+        if (skip > 0) glue("&$skip={skip}") else "",
+        if (length(arrange) == 1) glue("&$orderby={arrange}") else ""
       )
     })
 
@@ -71,6 +86,7 @@ mod_entity_table_server <- function(id, request) {
           columnDefs = list(
             list(
               targets = "_all",
+              orderable = FALSE,
               render = DT::JS(tooltip_js)
             )
           )
@@ -78,6 +94,7 @@ mod_entity_table_server <- function(id, request) {
       )
     })
 
+    # Paging dataset -----------------------------------------------------------
     observeEvent(request$entity, {
       min_row(1) # reset when new entity is opened
     })
@@ -102,6 +119,53 @@ mod_entity_table_server <- function(id, request) {
       response$direction <- "back"
       response$val <- ""
     })
+
+    # Extra special queries ----------------------------------------------------
+    output$query_rows <- renderUI({
+      req(length(fields()) > 0)
+      get_query_row(glue("{request$entity}_arrange1"), fields())
+    })
+
+    observeEvent(fields(), {
+      req(length(fields()) > 0)
+      req(!is.null(input[[glue("{request$entity}_arrange1_val")]]))
+      updateSelectizeInput(
+        session,
+        glue("{request$entity}_arrange1_val"),
+        choices = fields(),
+        selected = new
+      )
+    })
+
+    # Only supports "arrange" currently, but structure/UI is designed to be
+    # (hopefully) extendable to filter, select etc
+    get_query_row <- function(id, choices) {
+      split_choices <- list(ascending = choices,
+                            descending = glue("{choices} (desc)"))
+
+      fluidRow(
+        column(3,
+          selectInput(
+            ns(glue("{id}_verb")), "",
+            choices = c("arrange")
+          ),
+        ),
+        column(2,
+          uiOutput(ns(glue("{id}_operator")))
+        ),
+        column(7,
+          selectizeInput(
+            ns(glue("{id}_val")), "",
+            choices = split_choices,
+            options = list(
+              plugins = list("drag_drop", "optgroup_columns", "remove_button")
+            ),
+            multiple = TRUE,
+            width = "90%"
+          )
+        )
+      )
+    }
 
     return(response)
   })
